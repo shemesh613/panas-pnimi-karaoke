@@ -531,10 +531,10 @@ body {
     </div>
   </div>
 
-  <!-- Chorus 2 -->
+  <!-- Chorus 2a -->
   <div class="section chorus" data-section="5">
     <div class="glow-orb"></div>
-    <div class="section-label">🎵 פִּזְמוֹן – סִיּוּם גָּדוֹל</div>
+    <div class="section-label">🎵 פִּזְמוֹן</div>
     <div class="lyrics">
       <span class="line" data-line="24">פָּנָס פְּנִימִי, מִשְׁקָפַיִם חֶבְרָתִיּוֹת,</span>
       <span class="line" data-line="25">הַמַּפְתֵּחַ הַסּוֹדִי, גְּמִישׁוּת וְאִכְפַּתִיּוּת.</span>
@@ -543,12 +543,36 @@ body {
     </div>
   </div>
 
+  <!-- Chorus 2b -->
+  <div class="section chorus" data-section="6">
+    <div class="glow-orb"></div>
+    <div class="section-label">🎵 פִּזְמוֹן – פַּעַם שְׁנִיָּה</div>
+    <div class="lyrics">
+      <span class="line" data-line="28">פָּנָס פְּנִימִי, מִשְׁקָפַיִם חֶבְרָתִיּוֹת,</span>
+      <span class="line" data-line="29">הַמַּפְתֵּחַ הַסּוֹדִי – גְּמִישׁוּת וְאִכְפַּתִיּוּת.</span>
+      <span class="line" data-line="30">תִּיקִיָּה יְרוּקָה וְדוֹלְפִין,</span>
+      <span class="line" data-line="31">בַּכִּתָּה שֶׁלָּנוּ כֻּלָּנוּ אַחִים!</span>
+    </div>
+  </div>
+
+  <!-- Chorus 2c - Finale -->
+  <div class="section chorus" data-section="7">
+    <div class="glow-orb"></div>
+    <div class="section-label">🎵 פִּזְמוֹן – סִיּוּם גָּדוֹל!</div>
+    <div class="lyrics">
+      <span class="line" data-line="32">פָּנָס פְּנִימִי, מִשְׁקָפַיִם חֶבְרָתִיּוֹת,</span>
+      <span class="line" data-line="33">הַמַּפְתֵּחַ הַסּוֹדִי, גְּמִישׁוּת וְאִכְפַּתִיּוּת.</span>
+      <span class="line" data-line="34">תִּיקִיָּה יְרוּקָה וְדוֹלְפִין,</span>
+      <span class="line" data-line="35">בַּכִּתָּה שֶׁלָּנוּ כֻּלָּנוּ אַחִים!</span>
+    </div>
+  </div>
+
   <!-- Outro -->
-  <div class="section outro" data-section="6">
+  <div class="section outro" data-section="8">
     <div class="glow-orb"></div>
     <div class="section-label">🎶 סִיּוּם</div>
     <div class="lyrics">
-      <span class="line stage-direction" data-line="28">🎵 שְׁרִיקוֹת שְׂמֵחוֹת וּפְסַנְתֵּר נֶעֱלָם בְּאִטִּיּוּת... 🎹</span>
+      <span class="line stage-direction" data-line="36">🎵 שְׁרִיקוֹת שְׂמֵחוֹת וּפְסַנְתֵּר נֶעֱלָם בְּאִטִּיּוּת... 🎹</span>
     </div>
   </div>
 
@@ -571,42 +595,52 @@ body {
 // Each entry: [startTime in seconds, lineIndex]
 // Adjust these values to sync perfectly with your audio
 const TIMINGS = [
-  // Verse 1 (section 0)
-  { time: 2,   line: 0,  section: 0 },
-  { time: 7,   line: 1,  section: 0 },
-  { time: 12,  line: 2,  section: 0 },
-  { time: 17,  line: 3,  section: 0 },
-  { time: 22,  line: 4,  section: 0 },
-  { time: 26,  line: 5,  section: 0 },
+  // Verse 1 (section 0) — word-level timestamps from transcription
+  { time: 0.06,  line: 0,  section: 0 },  // בְּתוֹכִי דּוֹלֵק פָּנָס פְּנִימִי שֶׁמֵּאִיר
+  { time: 3.44,  line: 1,  section: 0 },  // אֶת הַלֵּב אֲנִי מְחַבֵּק
+  { time: 7.06,  line: 2,  section: 0 },  // בָּאַרְמוֹן שֶׁלִּי יֵשׁ מָקוֹם
+  { time: 10.68, line: 3,  section: 0 },  // לָרְגָשׁוֹת וְלַתְּחוּשׁוֹת
+  { time: 14.64, line: 4,  section: 0 },  // אֲנִי מְטַיֵּל בֵּין הַחֲדָרִים
+  { time: 17.82, line: 5,  section: 0 },  // מֵבִין מָה קוֹרֶה לִי בִּפְנִים
   // Chorus 1 (section 1)
-  { time: 31,  line: 6,  section: 1 },
-  { time: 36,  line: 7,  section: 1 },
-  { time: 41,  line: 8,  section: 1 },
-  { time: 45,  line: 9,  section: 1 },
-  // Verse 2 (section 2)
-  { time: 51,  line: 10, section: 2 },
-  { time: 56,  line: 11, section: 2 },
-  { time: 61,  line: 12, section: 2 },
-  { time: 66,  line: 13, section: 2 },
-  { time: 70,  line: 14, section: 2 },
+  { time: 21.58, line: 6,  section: 1 },  // פָּנָס פְּנִימִי, מִשְׁקָפַיִם
+  { time: 25.34, line: 7,  section: 1 },  // הַמַּפְתֵּחַ הַסּוֹדִי
+  { time: 29.14, line: 8,  section: 1 },  // תִּיקִיָּה יְרוּקָה וְדוֹלְפִין
+  { time: 32.62, line: 9,  section: 1 },  // בַּכִּתָּה שֶׁלָּנוּ כֻּלָּנוּ אַחִים
+  // Verse 2 (section 2) — instrumental break then singing
+  { time: 44.00, line: 10, section: 2 },  // בַּמַּרְתֵּף מְחַכּוֹת חָבִיּוֹת
+  { time: 46.92, line: 11, section: 2 },  // בּוֹדֵק מָה חָסֵר
+  { time: 50.72, line: 12, section: 2 },  // אִם חָבִית הִתְרוֹקְנָה
+  { time: 54.62, line: 13, section: 2 },  // וּכְשֶׁאֲנִי מְשַׁתֵּף בְּסִפּוּר
+  { time: 58.04, line: 14, section: 2 },  // הַקֶּשֶׁר שֶׁלָּנוּ הוֹפֵךְ
   // Verse 3 (section 3)
-  { time: 76,  line: 15, section: 3 },
-  { time: 81,  line: 16, section: 3 },
-  { time: 86,  line: 17, section: 3 },
-  { time: 90,  line: 18, section: 3 },
-  { time: 94,  line: 19, section: 3 },
-  { time: 98,  line: 20, section: 3 },
+  { time: 61.78, line: 15, section: 3 },  // לֹא כָּרִישׁ תּוֹקְפָנִי
+  { time: 65.14, line: 16, section: 3 },  // אֲנִי דּוֹלְפִין חָכָם
+  { time: 68.76, line: 17, section: 3 },  // כְּשֶׁפּוֹגְעִים בִּי
+  { time: 72.80, line: 18, section: 3 },  // לִבְדֹּק מָה הַלֵּב מַרְגִּישׁ
+  { time: 74.50, line: 19, section: 3 },  // וְאָז אֲזַנֵּק חֲזָרָה
+  { time: 76.38, line: 20, section: 3 },  // אַגִּיד לָמָּה לִי זֶה לֹא נָעִים
   // Bridge (section 4)
-  { time: 104, line: 21, section: 4 },
-  { time: 109, line: 22, section: 4 },
-  { time: 113, line: 23, section: 4 },
-  // Chorus 2 (section 5)
-  { time: 118, line: 24, section: 5 },
-  { time: 123, line: 25, section: 5 },
-  { time: 128, line: 26, section: 5 },
-  { time: 132, line: 27, section: 5 },
-  // Outro (section 6)
-  { time: 138, line: 28, section: 6 },
+  { time: 79.58, line: 21, section: 4 },  // בַּמִּשְׂחָק וּבַחַיִּים
+  { time: 83.32, line: 22, section: 4 },  // עַל פְּגִיעָה לֹא אֶשְׁתֹּק
+  { time: 85.12, line: 23, section: 4 },  // כִּי זֶהוּ כֹּחַ שֶׁל חָבֵר
+  // Chorus 2a (section 5)
+  { time: 88.88,  line: 24, section: 5 },  // פָּנָס פְּנִימִי
+  { time: 92.56,  line: 25, section: 5 },  // הַמַּפְתֵּחַ הַסּוֹדִי
+  { time: 96.00,  line: 26, section: 5 },  // תִּיקִיָּה יְרוּקָה
+  { time: 99.94,  line: 27, section: 5 },  // בַּכִּתָּה שֶׁלָּנוּ
+  // Chorus 2b (section 6)
+  { time: 103.86, line: 28, section: 6 },  // פָּנָס פְּנִימִי
+  { time: 106.94, line: 29, section: 6 },  // הַמַּפְתֵּחַ הַסּוֹדִי
+  { time: 110.96, line: 30, section: 6 },  // תִּיקִיָּה יְרוּקָה
+  { time: 114.46, line: 31, section: 6 },  // בַּכִּתָּה שֶׁלָּנוּ
+  // Chorus 2c - Finale (section 7)
+  { time: 117.94, line: 32, section: 7 },  // פָּנָס פְּנִימִי
+  { time: 121.92, line: 33, section: 7 },  // הַמַּפְתֵּחַ הַסּוֹדִי
+  { time: 125.50, line: 34, section: 7 },  // תִּיקִיָּה יְרוּקָה
+  { time: 129.06, line: 35, section: 7 },  // בַּכִּתָּה שֶׁלָּנוּ
+  // Outro (section 8)
+  { time: 133.37, line: 36, section: 8 },
 ];
 
 // ===== GLOBALS =====
@@ -732,13 +766,20 @@ function updateKaraoke() {
     }
   }
 
-  if (newLineIdx !== currentLineIdx) {
-    // Update lines
-    lines.forEach((line, idx) => {
+  if (newLineIdx !== currentLineIdx || newSectionIdx !== currentSectionIdx) {
+    // Update all lines - mark active, done, or default
+    lines.forEach(line => {
+      const lineIdx = parseInt(line.dataset.line);
+      const lineSection = parseInt(line.closest('.section').dataset.section);
       line.classList.remove('active', 'done');
-      if (idx === newLineIdx) {
+
+      if (lineIdx === newLineIdx) {
         line.classList.add('active');
-      } else if (idx < newLineIdx) {
+      } else if (lineSection < newSectionIdx) {
+        // Lines in previous sections are done
+        line.classList.add('done');
+      } else if (lineSection === newSectionIdx && lineIdx < newLineIdx) {
+        // Lines before active in same section are done
         line.classList.add('done');
       }
     });
