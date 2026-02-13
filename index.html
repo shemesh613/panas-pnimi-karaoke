@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🏮 פָּנָס פְּנִימִי – שיר קראוקי</title>
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;600;700;900&family=Secular+One&family=Varela+Round&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ocean: #0B7A8A;
+  --ocean-deep: #065A68;
+  --lantern: #FFD166;
+  --lantern-glow: #FFF3C4;
+  --coral: #FF6B6B;
+  --green-folder: #4ECB71;
+  --sky: #87CEEB;
+  --sand: #FFF8EE;
+  --purple-glasses: #9B72CF;
+  --text-dark: #1A3A4A;
+  --text-mid: #2C5F6F;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Varela Round', 'Rubik', sans-serif;
+  background: linear-gradient(135deg, #0a1628 0%, #0d2137 30%, #0a1628 60%, #121a2e 100%);
+  color: #e0e8f0;
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+/* ===== STARFIELD ===== */
+.starfield {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+.star {
+  position: absolute;
+  border-radius: 50%;
+  background: white;
+  animation: twinkle var(--dur) ease-in-out infinite;
+  animation-delay: var(--delay);
+}
+@keyframes twinkle {
+  0%, 100% { opacity: 0.2; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1.2); }
+}
+
+/* ===== HEADER ===== */
+.header {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  padding: 30px 20px 10px;
+}
+.main-title {
+  font-family: 'Secular One', sans-serif;
+  font-size: clamp(2rem, 5.5vw, 3.2rem);
+  background: linear-gradient(135deg, var(--lantern) 0%, #ffaa44 50%, var(--lantern) 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shimmer 3s linear infinite;
+  filter: drop-shadow(0 0 20px rgba(255,209,102,0.4));
+}
+@keyframes shimmer {
+  0% { background-position: 200% center; }
+  100% { background-position: -200% center; }
+}
+.subtitle {
+  font-size: clamp(0.9rem, 2vw, 1.1rem);
+  color: rgba(255,255,255,0.5);
+  margin-top: 6px;
+}
+
+/* ===== AUDIO PLAYER ===== */
+.player-container {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: linear-gradient(180deg, rgba(10,22,40,0.98) 0%, rgba(10,22,40,0.9) 80%, transparent 100%);
+  padding: 12px 20px 20px;
+  backdrop-filter: blur(15px);
+}
+.player-inner {
+  max-width: 700px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+.play-btn {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: none;
+  background: linear-gradient(135deg, var(--lantern), #ffaa44);
+  color: #1a1a2e;
+  font-size: 1.6rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 30px rgba(255,209,102,0.4), 0 4px 15px rgba(0,0,0,0.3);
+  transition: all 0.3s ease;
+  position: relative;
+  z-index: 2;
+}
+.play-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 50px rgba(255,209,102,0.6), 0 6px 20px rgba(0,0,0,0.3);
+}
+.play-btn.playing {
+  animation: pulse-glow 1.5s ease-in-out infinite;
+}
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 30px rgba(255,209,102,0.4); }
+  50% { box-shadow: 0 0 60px rgba(255,209,102,0.7), 0 0 100px rgba(255,209,102,0.3); }
+}
+
+/* Visualizer */
+.visualizer {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 2px;
+  height: 30px;
+  width: 100%;
+  max-width: 500px;
+  direction: ltr;
+}
+.viz-bar {
+  flex: 1;
+  max-width: 6px;
+  min-height: 2px;
+  border-radius: 3px;
+  background: var(--lantern);
+  transition: height 0.08s ease;
+  opacity: 0.7;
+}
+
+/* Progress bar */
+.progress-container {
+  width: 100%;
+  max-width: 500px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.progress-bar {
+  flex: 1;
+  height: 6px;
+  background: rgba(255,255,255,0.15);
+  border-radius: 3px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--lantern), var(--coral));
+  width: 0%;
+  transition: width 0.3s linear;
+}
+.time-label {
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.5);
+  min-width: 42px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  direction: ltr;
+}
+
+/* ===== LYRICS CONTAINER ===== */
+.lyrics-container {
+  max-width: 750px;
+  margin: 0 auto;
+  padding: 10px 20px 160px;
+  position: relative;
+  z-index: 2;
+}
+
+/* Section */
+.section {
+  margin-bottom: 24px;
+  border-radius: 20px;
+  padding: 24px 26px;
+  position: relative;
+  overflow: hidden;
+  opacity: 0.35;
+  transform: scale(0.97);
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.section.active {
+  opacity: 1;
+  transform: scale(1);
+}
+.section.done {
+  opacity: 0.5;
+  transform: scale(0.97);
+}
+
+/* Section types */
+.verse {
+  background: linear-gradient(135deg, rgba(11,122,138,0.12) 0%, rgba(11,122,138,0.06) 100%);
+  border-right: 5px solid rgba(11,122,138,0.4);
+}
+.verse.active { border-right-color: var(--ocean); background: linear-gradient(135deg, rgba(11,122,138,0.2) 0%, rgba(11,122,138,0.08) 100%); }
+
+.chorus {
+  background: linear-gradient(135deg, rgba(255,209,102,0.1) 0%, rgba(255,170,68,0.06) 100%);
+  border-right: 5px solid rgba(255,209,102,0.4);
+  text-align: center;
+}
+.chorus.active { border-right-color: var(--lantern); background: linear-gradient(135deg, rgba(255,209,102,0.18) 0%, rgba(255,170,68,0.1) 100%); }
+
+.bridge {
+  background: linear-gradient(135deg, rgba(155,114,207,0.1) 0%, rgba(155,114,207,0.05) 100%);
+  border-right: 5px solid rgba(155,114,207,0.4);
+  text-align: center;
+}
+.bridge.active { border-right-color: var(--purple-glasses); background: linear-gradient(135deg, rgba(155,114,207,0.18) 0%, rgba(155,114,207,0.08) 100%); }
+
+.outro {
+  background: linear-gradient(135deg, rgba(78,203,113,0.1) 0%, rgba(78,203,113,0.05) 100%);
+  border-right: 5px solid rgba(78,203,113,0.4);
+  text-align: center;
+}
+.outro.active { border-right-color: var(--green-folder); background: linear-gradient(135deg, rgba(78,203,113,0.18) 0%, rgba(78,203,113,0.08) 100%); }
+
+/* Section label */
+.section-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'Secular One', sans-serif;
+  font-size: 0.8rem;
+  padding: 4px 14px;
+  border-radius: 20px;
+  margin-bottom: 14px;
+  color: rgba(255,255,255,0.5);
+}
+.section.active .section-label { color: rgba(255,255,255,0.8); }
+.verse .section-label { background: rgba(11,122,138,0.2); }
+.chorus .section-label { background: rgba(255,209,102,0.2); }
+.bridge .section-label { background: rgba(155,114,207,0.2); }
+.outro .section-label { background: rgba(78,203,113,0.2); }
+
+/* Lyrics line */
+.line {
+  display: block;
+  font-family: 'Varela Round', sans-serif;
+  font-size: clamp(1rem, 2.5vw, 1.2rem);
+  line-height: 2.4;
+  color: rgba(255,255,255,0.35);
+  transition: all 0.4s ease;
+  position: relative;
+}
+.section.active .line {
+  color: rgba(255,255,255,0.55);
+}
+.line.active {
+  color: #ffffff !important;
+  text-shadow: 0 0 20px rgba(255,209,102,0.6), 0 0 40px rgba(255,209,102,0.3);
+  transform: scale(1.04);
+  font-weight: 600;
+}
+.line.done {
+  color: rgba(255,255,255,0.4) !important;
+  text-shadow: none;
+  transform: scale(1);
+  font-weight: 400;
+}
+
+.chorus .line.active {
+  text-shadow: 0 0 25px rgba(255,209,102,0.8), 0 0 50px rgba(255,170,68,0.4);
+}
+.bridge .line.active {
+  text-shadow: 0 0 25px rgba(155,114,207,0.8), 0 0 50px rgba(155,114,207,0.4);
+}
+
+/* Glow orb following active line */
+.glow-orb {
+  position: absolute;
+  width: 300px;
+  height: 80px;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+  transition: all 0.5s ease;
+  opacity: 0;
+}
+.section.active .glow-orb {
+  opacity: 1;
+}
+.verse .glow-orb { background: radial-gradient(ellipse, rgba(11,122,138,0.15) 0%, transparent 70%); }
+.chorus .glow-orb { background: radial-gradient(ellipse, rgba(255,209,102,0.15) 0%, transparent 70%); }
+.bridge .glow-orb { background: radial-gradient(ellipse, rgba(155,114,207,0.15) 0%, transparent 70%); }
+.outro .glow-orb { background: radial-gradient(ellipse, rgba(78,203,113,0.15) 0%, transparent 70%); }
+
+/* Stage direction */
+.stage-direction {
+  font-size: 0.85rem;
+  color: rgba(255,255,255,0.3);
+  font-style: italic;
+}
+
+/* ===== FLOATING PARTICLES ===== */
+.particles-canvas {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ===== SHARE BUTTON ===== */
+.share-section {
+  position: fixed;
+  bottom: 0;
+  left: 0; right: 0;
+  z-index: 100;
+  background: linear-gradient(0deg, rgba(10,22,40,0.98) 0%, rgba(10,22,40,0.9) 70%, transparent 100%);
+  padding: 30px 20px 20px;
+  text-align: center;
+}
+.share-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 32px;
+  border-radius: 50px;
+  border: none;
+  background: linear-gradient(135deg, #25D366, #128C7E);
+  color: white;
+  font-family: 'Varela Round', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 20px rgba(37,211,102,0.3);
+  transition: all 0.3s ease;
+  text-decoration: none;
+}
+.share-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 30px rgba(37,211,102,0.5);
+}
+.share-btn svg {
+  width: 24px;
+  height: 24px;
+  fill: white;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 600px) {
+  .section { padding: 18px 16px; }
+  .play-btn { width: 54px; height: 54px; font-size: 1.3rem; }
+  .share-btn { padding: 12px 24px; font-size: 1rem; }
+}
+
+/* ===== INITIAL STATE ===== */
+.intro-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  z-index: 200;
+  background: radial-gradient(ellipse at center, #0d2137 0%, #0a1628 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 30px;
+  transition: opacity 0.8s ease, visibility 0.8s ease;
+}
+.intro-overlay.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+.intro-lantern {
+  font-size: 6rem;
+  animation: lantern-float 3s ease-in-out infinite;
+}
+@keyframes lantern-float {
+  0%, 100% { transform: translateY(0) scale(1); filter: brightness(1); }
+  50% { transform: translateY(-15px) scale(1.1); filter: brightness(1.3) drop-shadow(0 0 30px rgba(255,209,102,0.6)); }
+}
+.intro-title {
+  font-family: 'Secular One', sans-serif;
+  font-size: clamp(1.8rem, 5vw, 2.8rem);
+  color: var(--lantern);
+  text-shadow: 0 0 40px rgba(255,209,102,0.4);
+  text-align: center;
+}
+.intro-play-btn {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  border: 3px solid var(--lantern);
+  background: rgba(255,209,102,0.1);
+  color: var(--lantern);
+  font-size: 2.5rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  animation: pulse-border 2s ease-in-out infinite;
+}
+.intro-play-btn:hover {
+  background: rgba(255,209,102,0.2);
+  transform: scale(1.1);
+}
+@keyframes pulse-border {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255,209,102,0.4); }
+  50% { box-shadow: 0 0 0 15px rgba(255,209,102,0); }
+}
+.intro-hint {
+  color: rgba(255,255,255,0.4);
+  font-size: 0.9rem;
+}
+</style>
+</head>
+<body>
+
+<!-- Intro overlay -->
+<div class="intro-overlay" id="introOverlay">
+  <div class="intro-lantern">🏮</div>
+  <div class="intro-title">פָּנָס פְּנִימִי</div>
+  <button class="intro-play-btn" id="introPlayBtn" onclick="startKaraoke()">▶</button>
+  <div class="intro-hint">לחצו להפעלה</div>
+</div>
+
+<!-- Stars -->
+<div class="starfield" id="starfield"></div>
+
+<!-- Particles canvas -->
+<canvas class="particles-canvas" id="particlesCanvas"></canvas>
+
+<!-- Header -->
+<div class="header">
+  <h1 class="main-title">🏮 פָּנָס פְּנִימִי 🐬</h1>
+  <p class="subtitle">שִׁיר לְכִּתָּה ב׳ · מיומנויות חברתיות-רגשיות</p>
+</div>
+
+<!-- Sticky Player -->
+<div class="player-container" id="playerContainer">
+  <div class="player-inner">
+    <button class="play-btn" id="playBtn" onclick="togglePlay()">▶</button>
+    <div class="visualizer" id="visualizer"></div>
+    <div class="progress-container">
+      <span class="time-label" id="currentTime">0:00</span>
+      <div class="progress-bar" id="progressBar" onclick="seek(event)">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+      <span class="time-label" id="totalTime">0:00</span>
+    </div>
+  </div>
+</div>
+
+<!-- Song Lyrics -->
+<div class="lyrics-container" id="lyricsContainer">
+
+  <!-- Verse 1 -->
+  <div class="section verse" data-section="0">
+    <div class="glow-orb"></div>
+    <div class="section-label">🏮 בֵּית 1 – סִפּוּר עָדִין</div>
+    <div class="lyrics">
+      <span class="line" data-line="0">בְּתוֹכִי דּוֹלֵק פָּנָס פְּנִימִי שֶׁמֵּאִיר,</span>
+      <span class="line" data-line="1">אֶת הַלֵּב אֲנִי מְחַבֵּק, זֶה בְּסֵדֶר לְהַרְגִּישׁ.</span>
+      <span class="line" data-line="2">בָּאַרְמוֹן שֶׁלִּי יֵשׁ מָקוֹם לַמַּחְשָׁבוֹת,</span>
+      <span class="line" data-line="3">לָרְגָשׁוֹת וְלַתְּחוּשׁוֹת שֶׁבֵּין הַקּוֹמוֹת.</span>
+      <span class="line" data-line="4">אֲנִי מְטַיֵּל בֵּין הַחֲדָרִים,</span>
+      <span class="line" data-line="5">מֵבִין מָה קוֹרֶה לִי בִּפְנִים, בַּחַיִּים.</span>
+    </div>
+  </div>
+
+  <!-- Chorus 1 -->
+  <div class="section chorus" data-section="1">
+    <div class="glow-orb"></div>
+    <div class="section-label">🎵 פִּזְמוֹן</div>
+    <div class="lyrics">
+      <span class="line" data-line="6">פָּנָס פְּנִימִי, מִשְׁקָפַיִם חֶבְרָתִיּוֹת,</span>
+      <span class="line" data-line="7">הַמַּפְתֵּחַ הַסּוֹדִי, גְּמִישׁוּת וְאִכְפַּתִיּוּת.</span>
+      <span class="line" data-line="8">תִּיקִיָּה יְרוּקָה וְדוֹלְפִין,</span>
+      <span class="line" data-line="9">בַּכִּתָּה שֶׁלָּנוּ כֻּלָּנוּ אַחִים!</span>
+    </div>
+  </div>
+
+  <!-- Verse 2 -->
+  <div class="section verse" data-section="2">
+    <div class="glow-orb"></div>
+    <div class="section-label">🪣 בֵּית 2 – חָבִיּוֹת שֶׁל כֹּחַ</div>
+    <div class="lyrics">
+      <span class="line" data-line="10">בַּמַּרְתֵּף מְחַכּוֹת חָבִיּוֹת שֶׁל כֹּחַ,</span>
+      <span class="line" data-line="11">בּוֹדֵק מָה חָסֵר וּמָה עוֹזֵר לִי לִשְׂמֹחַ.</span>
+      <span class="line" data-line="12">אִם חָבִית הִתְרוֹקְנָה – אֲמַלֵּא אוֹתָהּ מֵחָדָשׁ,</span>
+      <span class="line" data-line="13">וּכְשֶׁאֲנִי מְשַׁתֵּף בְּסִפּוּר וּבְסוֹד,</span>
+      <span class="line" data-line="14">הַקֶּשֶׁר שֶׁלָּנוּ הוֹפֵךְ לְמָתוֹק וְטוֹב.</span>
+    </div>
+  </div>
+
+  <!-- Verse 3 -->
+  <div class="section verse" data-section="3">
+    <div class="glow-orb"></div>
+    <div class="section-label">🐬 בֵּית 3 – הַדּוֹלְפִין</div>
+    <div class="lyrics">
+      <span class="line" data-line="15">לֹא כָּרִישׁ תּוֹקְפָנִי וְלֹא סַרְדִּין שֶׁשּׁוֹתֵק,</span>
+      <span class="line" data-line="16">אֲנִי דּוֹלְפִין חָכָם, לֹא נֶעֱלָם וְלֹא מִתְנַתֵּק.</span>
+      <span class="line" data-line="17">כְּשֶׁפּוֹגְעִים בִּי – אֶצְלֹל עָמֹק פְּנִימָה,</span>
+      <span class="line" data-line="18">לִבְדֹּק מָה הַלֵּב מַרְגִּישׁ</span>
+      <span class="line" data-line="19">וְאָז אֲזַנֵּק חֲזָרָה וַאֲבַקֵּשׁ,</span>
+      <span class="line" data-line="20">אַגִּיד לָמָּה לִי זֶה לֹא נָעִים.</span>
+    </div>
+  </div>
+
+  <!-- Bridge -->
+  <div class="section bridge" data-section="4">
+    <div class="glow-orb"></div>
+    <div class="section-label">🌉 גֶּשֶׁר – עוֹצְמָה עוֹלָה</div>
+    <div class="lyrics">
+      <span class="line" data-line="21">בַּמִּשְׂחָק וּבַחַיִּים אֶהְיֶה גָּמִישׁ וְקַל,</span>
+      <span class="line" data-line="22">עַל פְּגִיעָה לֹא אֶשְׁתֹּק,</span>
+      <span class="line" data-line="23">כִּי זֶהוּ כֹּחַ שֶׁל חָבֵר!</span>
+    </div>
+  </div>
+
+  <!-- Chorus 2 -->
+  <div class="section chorus" data-section="5">
+    <div class="glow-orb"></div>
+    <div class="section-label">🎵 פִּזְמוֹן – סִיּוּם גָּדוֹל</div>
+    <div class="lyrics">
+      <span class="line" data-line="24">פָּנָס פְּנִימִי, מִשְׁקָפַיִם חֶבְרָתִיּוֹת,</span>
+      <span class="line" data-line="25">הַמַּפְתֵּחַ הַסּוֹדִי, גְּמִישׁוּת וְאִכְפַּתִיּוּת.</span>
+      <span class="line" data-line="26">תִּיקִיָּה יְרוּקָה וְדוֹלְפִין,</span>
+      <span class="line" data-line="27">בַּכִּתָּה שֶׁלָּנוּ כֻּלָּנוּ אַחִים!</span>
+    </div>
+  </div>
+
+  <!-- Outro -->
+  <div class="section outro" data-section="6">
+    <div class="glow-orb"></div>
+    <div class="section-label">🎶 סִיּוּם</div>
+    <div class="lyrics">
+      <span class="line stage-direction" data-line="28">🎵 שְׁרִיקוֹת שְׂמֵחוֹת וּפְסַנְתֵּר נֶעֱלָם בְּאִטִּיּוּת... 🎹</span>
+    </div>
+  </div>
+
+</div>
+
+<!-- Share section -->
+<div class="share-section">
+  <a class="share-btn" id="shareBtn" href="#" onclick="shareToParents(event)">
+    <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+    שליחה להורים בווטסאפ
+  </a>
+</div>
+
+<audio id="audioPlayer" preload="auto">
+  <source src="song.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+// ===== TIMING DATA =====
+// Each entry: [startTime in seconds, lineIndex]
+// Adjust these values to sync perfectly with your audio
+const TIMINGS = [
+  // Verse 1 (section 0)
+  { time: 2,   line: 0,  section: 0 },
+  { time: 7,   line: 1,  section: 0 },
+  { time: 12,  line: 2,  section: 0 },
+  { time: 17,  line: 3,  section: 0 },
+  { time: 22,  line: 4,  section: 0 },
+  { time: 26,  line: 5,  section: 0 },
+  // Chorus 1 (section 1)
+  { time: 31,  line: 6,  section: 1 },
+  { time: 36,  line: 7,  section: 1 },
+  { time: 41,  line: 8,  section: 1 },
+  { time: 45,  line: 9,  section: 1 },
+  // Verse 2 (section 2)
+  { time: 51,  line: 10, section: 2 },
+  { time: 56,  line: 11, section: 2 },
+  { time: 61,  line: 12, section: 2 },
+  { time: 66,  line: 13, section: 2 },
+  { time: 70,  line: 14, section: 2 },
+  // Verse 3 (section 3)
+  { time: 76,  line: 15, section: 3 },
+  { time: 81,  line: 16, section: 3 },
+  { time: 86,  line: 17, section: 3 },
+  { time: 90,  line: 18, section: 3 },
+  { time: 94,  line: 19, section: 3 },
+  { time: 98,  line: 20, section: 3 },
+  // Bridge (section 4)
+  { time: 104, line: 21, section: 4 },
+  { time: 109, line: 22, section: 4 },
+  { time: 113, line: 23, section: 4 },
+  // Chorus 2 (section 5)
+  { time: 118, line: 24, section: 5 },
+  { time: 123, line: 25, section: 5 },
+  { time: 128, line: 26, section: 5 },
+  { time: 132, line: 27, section: 5 },
+  // Outro (section 6)
+  { time: 138, line: 28, section: 6 },
+];
+
+// ===== GLOBALS =====
+const audio = document.getElementById('audioPlayer');
+const playBtn = document.getElementById('playBtn');
+const progressFill = document.getElementById('progressFill');
+const currentTimeEl = document.getElementById('currentTime');
+const totalTimeEl = document.getElementById('totalTime');
+const introOverlay = document.getElementById('introOverlay');
+const sections = document.querySelectorAll('.section');
+const lines = document.querySelectorAll('.line');
+
+let audioCtx, analyser, source, vizBars = [];
+let isPlaying = false;
+let currentLineIdx = -1;
+let currentSectionIdx = -1;
+let animFrame;
+
+// ===== STARS =====
+function createStars() {
+  const sf = document.getElementById('starfield');
+  for (let i = 0; i < 80; i++) {
+    const star = document.createElement('div');
+    star.className = 'star';
+    star.style.cssText = `
+      left: ${Math.random() * 100}%;
+      top: ${Math.random() * 100}%;
+      width: ${1 + Math.random() * 2.5}px;
+      height: ${1 + Math.random() * 2.5}px;
+      --dur: ${2 + Math.random() * 4}s;
+      --delay: ${Math.random() * 4}s;
+    `;
+    sf.appendChild(star);
+  }
+}
+createStars();
+
+// ===== VISUALIZER BARS =====
+function createVizBars() {
+  const viz = document.getElementById('visualizer');
+  for (let i = 0; i < 40; i++) {
+    const bar = document.createElement('div');
+    bar.className = 'viz-bar';
+    bar.style.height = '2px';
+    viz.appendChild(bar);
+    vizBars.push(bar);
+  }
+}
+createVizBars();
+
+// ===== PARTICLES =====
+const canvas = document.getElementById('particlesCanvas');
+const ctx = canvas.getContext('2d');
+let particles = [];
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+class Particle {
+  constructor() { this.reset(); }
+  reset() {
+    this.x = Math.random() * canvas.width;
+    this.y = canvas.height + 10;
+    this.size = Math.random() * 3 + 1;
+    this.speedY = -(Math.random() * 1.5 + 0.3);
+    this.speedX = (Math.random() - 0.5) * 0.5;
+    this.opacity = Math.random() * 0.5 + 0.1;
+    this.color = ['#FFD166', '#87CEEB', '#9B72CF', '#4ECB71', '#FF6B6B'][Math.floor(Math.random() * 5)];
+    this.life = 0;
+    this.maxLife = 200 + Math.random() * 200;
+  }
+  update(intensity) {
+    this.speedY -= 0.003 * intensity;
+    this.y += this.speedY;
+    this.x += this.speedX + Math.sin(this.life * 0.02) * 0.3;
+    this.life++;
+    if (this.life > this.maxLife || this.y < -10) this.reset();
+  }
+  draw() {
+    const alpha = this.opacity * (1 - this.life / this.maxLife);
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+    ctx.fillStyle = this.color + Math.floor(alpha * 255).toString(16).padStart(2, '0');
+    ctx.fill();
+  }
+}
+
+for (let i = 0; i < 50; i++) {
+  const p = new Particle();
+  p.y = Math.random() * canvas.height;
+  p.life = Math.random() * 200;
+  particles.push(p);
+}
+
+// ===== AUDIO SETUP =====
+function setupAudio() {
+  if (audioCtx) return;
+  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  analyser = audioCtx.createAnalyser();
+  analyser.fftSize = 128;
+  source = audioCtx.createMediaElementSource(audio);
+  source.connect(analyser);
+  analyser.connect(audioCtx.destination);
+}
+
+// ===== KARAOKE ENGINE =====
+function updateKaraoke() {
+  if (!isPlaying) return;
+  const t = audio.currentTime;
+
+  // Find current timing entry
+  let newLineIdx = -1;
+  let newSectionIdx = -1;
+  for (let i = TIMINGS.length - 1; i >= 0; i--) {
+    if (t >= TIMINGS[i].time) {
+      newLineIdx = TIMINGS[i].line;
+      newSectionIdx = TIMINGS[i].section;
+      break;
+    }
+  }
+
+  if (newLineIdx !== currentLineIdx) {
+    // Update lines
+    lines.forEach((line, idx) => {
+      line.classList.remove('active', 'done');
+      if (idx === newLineIdx) {
+        line.classList.add('active');
+      } else if (idx < newLineIdx) {
+        line.classList.add('done');
+      }
+    });
+
+    // Update sections
+    if (newSectionIdx !== currentSectionIdx) {
+      sections.forEach((sec, idx) => {
+        sec.classList.remove('active', 'done');
+        if (idx === newSectionIdx) {
+          sec.classList.add('active');
+        } else if (idx < newSectionIdx) {
+          sec.classList.add('done');
+        }
+      });
+
+      // Scroll to active section
+      if (newSectionIdx >= 0) {
+        const activeSec = sections[newSectionIdx];
+        if (activeSec) {
+          activeSec.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }
+      currentSectionIdx = newSectionIdx;
+    }
+
+    // Move glow orb
+    if (newLineIdx >= 0 && newSectionIdx >= 0) {
+      const activeLine = document.querySelector(`.line[data-line="${newLineIdx}"]`);
+      const activeSection = sections[newSectionIdx];
+      if (activeLine && activeSection) {
+        const orb = activeSection.querySelector('.glow-orb');
+        if (orb) {
+          const lineRect = activeLine.getBoundingClientRect();
+          const secRect = activeSection.getBoundingClientRect();
+          orb.style.top = (lineRect.top - secRect.top - 20) + 'px';
+          orb.style.right = '50%';
+          orb.style.transform = 'translateX(50%)';
+        }
+      }
+    }
+
+    currentLineIdx = newLineIdx;
+  }
+
+  // Update progress
+  if (audio.duration) {
+    const pct = (t / audio.duration) * 100;
+    progressFill.style.width = pct + '%';
+    currentTimeEl.textContent = formatTime(t);
+    totalTimeEl.textContent = formatTime(audio.duration);
+  }
+
+  // Update visualizer
+  if (analyser) {
+    const data = new Uint8Array(analyser.frequencyBinCount);
+    analyser.getByteFrequencyData(data);
+    const avgIntensity = data.reduce((a, b) => a + b, 0) / data.length / 255;
+
+    vizBars.forEach((bar, i) => {
+      const idx = Math.floor(i * data.length / vizBars.length);
+      const val = data[idx] / 255;
+      const h = Math.max(2, val * 30);
+      bar.style.height = h + 'px';
+      const hue = 40 + val * 20;
+      bar.style.background = `hsl(${hue}, 100%, ${50 + val * 30}%)`;
+      bar.style.opacity = 0.4 + val * 0.6;
+    });
+
+    // Update particles intensity
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    particles.forEach(p => {
+      p.update(1 + avgIntensity * 3);
+      p.draw();
+    });
+  } else {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    particles.forEach(p => { p.update(1); p.draw(); });
+  }
+
+  animFrame = requestAnimationFrame(updateKaraoke);
+}
+
+// ===== CONTROLS =====
+function startKaraoke() {
+  setupAudio();
+  introOverlay.classList.add('hidden');
+  audio.play();
+  isPlaying = true;
+  playBtn.textContent = '⏸';
+  playBtn.classList.add('playing');
+  updateKaraoke();
+}
+
+function togglePlay() {
+  setupAudio();
+  if (audio.paused) {
+    audio.play();
+    isPlaying = true;
+    playBtn.textContent = '⏸';
+    playBtn.classList.add('playing');
+    updateKaraoke();
+  } else {
+    audio.pause();
+    isPlaying = false;
+    playBtn.textContent = '▶';
+    playBtn.classList.remove('playing');
+    cancelAnimationFrame(animFrame);
+  }
+}
+
+function seek(e) {
+  const bar = document.getElementById('progressBar');
+  const rect = bar.getBoundingClientRect();
+  const pct = (e.clientX - rect.left) / rect.width;
+  audio.currentTime = pct * audio.duration;
+}
+
+audio.addEventListener('ended', () => {
+  isPlaying = false;
+  playBtn.textContent = '▶';
+  playBtn.classList.remove('playing');
+  cancelAnimationFrame(animFrame);
+  // Show all sections as done
+  sections.forEach(s => { s.classList.remove('active'); s.classList.add('done'); });
+});
+
+function formatTime(s) {
+  const m = Math.floor(s / 60);
+  const sec = Math.floor(s % 60);
+  return m + ':' + sec.toString().padStart(2, '0');
+}
+
+// ===== SHARE =====
+function shareToParents(e) {
+  e.preventDefault();
+  const url = window.location.href;
+  const text = encodeURIComponent('🏮 שיר "פנס פנימי" - שיר על מיומנויות חברתיות-רגשיות שלמדנו בכיתה!\n🎵 לחצו להאזנה עם מילים מוארות:\n' + url);
+  window.open('https://wa.me/?text=' + text, '_blank');
+}
+
+// Idle particles animation
+function idleParticles() {
+  if (isPlaying) return;
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  particles.forEach(p => { p.update(0.5); p.draw(); });
+  requestAnimationFrame(idleParticles);
+}
+idleParticles();
+</script>
+</body>
+</html>
